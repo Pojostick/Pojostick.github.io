@@ -4,7 +4,9 @@
 		<title>3D Bump Mapped WebGL Shader Test</title>
 		<link rel="stylesheet" href="css/style.css">
 	</head>
-	<body id="render">
+	<body id="render" title="Move Mouse to Move Flashlight.
+Left Click to Enable/Disable Flashlight.
+Right Click to Move Ambient Light Source.">
 		<script id="fragmentShader">
 			uniform sampler2D tex;
 			uniform sampler2D norm;
@@ -23,11 +25,12 @@
 				lightPosition.y = minres / maxres - lightPosition.y;
 				lampPosition.y = minres / maxres - lampPosition.y;
 				
-				vec3 lightVector = vec3(lightPosition.x - pixel.x, lightPosition.y - pixel.y, light.z);
-				vec3 lampVector = vec3(lampPosition.x - pixel.x, lampPosition.y - pixel.y, lamp.z);
+				vec3 lightVector = vec3(lightPosition.x - pixel.x, pixel.y - lightPosition.y, light.z);
+				vec3 lampVector = vec3(lampPosition.x - pixel.x, pixel.y - lampPosition.y, lamp.z);
 
 				normal.x -= 0.5;
 				normal.y -= 0.5;
+				
 				vec3 normalVector = normalize(normal.xyz);
 				lightVector = normalize(lightVector);
 				lampVector = normalize(lampVector);
