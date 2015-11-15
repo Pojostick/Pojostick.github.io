@@ -30,6 +30,9 @@ var shaderCode = document.getElementById("fragmentShader").textContent;
 var material = new THREE.ShaderMaterial({uniforms:uniforms,fragmentShader:shaderCode})
 var geometry = new THREE.PlaneGeometry(10, 10);
 
+var lastMouse = 1;
+var lastGamma = 2.5;
+
 scene.add(new THREE.Mesh(geometry,material));
 
 camera.position.z = 2;
@@ -46,11 +49,14 @@ document.onmousemove = function(event){
 }
 
 document.getElementById("render").onmousedown = function(event){
-    switch (event.which) {
+	lastMouse = event.which;
+    switch (lastMouse) {
         case 1:
-			if(uniforms.gamma.value)
+			if(uniforms.gamma.value) {
+				lastGamma = uniforms.gamma.value;
 				uniforms.gamma.value = 0.0;
-			else uniforms.gamma.value = 2.5;
+			}
+			else uniforms.gamma.value = lastGamma;
             break;
         case 3:
 			uniforms.lamp.value.x = event.pageX; 
@@ -61,4 +67,28 @@ document.getElementById("render").onmousedown = function(event){
 
 document.getElementById("render").oncontextmenu = function(event){
 	event.preventDefault();
+}
+
+document.getElementById("render").addEventListener('mousewheel',function(event){
+    mouseController.wheel(event);
+    return false; 
+}, false);
+
+if (document.getElementById("render").addEventListener) {
+	document.getElementById("render").addEventListener("mousewheel", mousewheel, false);
+	document.getElementById("render").addEventListener("DOMMouseScroll", mousewheel, false);
+}
+else document.getElementById("render").attachEvent("onmousewheel", mousewheel);
+
+function mousewheel(event) {
+	var e = window.event || event;
+	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+	switch (lastMouse) {
+        case 1:
+			uniforms.gamma.value += delta / 10.0;
+			break;
+        case 3:
+			uniforms.natural.value += delta / 10.0;
+            break;
+	}
 }
