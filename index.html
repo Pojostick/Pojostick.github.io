@@ -1,27 +1,43 @@
-<HTML>
-   
-<HEAD>
-    <TITLE>Color Text!</TITLE>
-</HEAD>
-<body style="background-color:#080808;">
-<BODY>
-    <CENTER><B>Color Text!</B>
-    <BR>
-    <APPLET CODE="Applet.class" ARCHIVE="MyApplet.jar"       
-        WIDTH=640
-          HEIGHT=480>
-    </APPLET>
-    <pre style="font-family:verdana;color:white;font-size:16px;">
-Cookie Clicker style text entities
-Collect as many points in 60 seconds!
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>3D Bump Mapped WebGL Shader Test</title>
+		<link rel="stylesheet" href="css/style.css">
+	</head>
+	<body id="render">
+		<script id="fragmentShader">
+			uniform sampler2D tex;
+			uniform sampler2D norm;
+			uniform float minres;
+			uniform float maxres;
+			uniform float gamma;
+			uniform float natural;
+			uniform vec4 light;
+			uniform vec4 lamp;
+			void main() {
+				vec2 pixel = gl_FragCoord.xy / maxres;
+				vec4 color = texture2D(tex,pixel);
+				vec4 normal = texture2D(norm,pixel);
+				vec2 lightPosition = light.xy / maxres;
+				vec2 lampPosition = lamp.xy / maxres;
+				lightPosition.y = minres / maxres - lightPosition.y;
+				lampPosition.y = minres / maxres - lampPosition.y;
+				
+				vec3 lightVector = vec3(lightPosition.x - pixel.x, lightPosition.y - pixel.y, light.z);
+				vec3 lampVector = vec3(lampPosition.x - pixel.x, lampPosition.y - pixel.y, lamp.z);
 
-Left-click = spawn text entity
-Right-click = upgrade to spawn more text entities per click
-Shift+Left-click = spawn color bomb to spawn multiple text entities over time
-	</pre>
-	<hr>
-	<p style="font-family:verdana;color:white;font-size:16px;">Download it <a href=" http://www.mediafire.com/download/zchsz4m6g8wstd9/ColorText.jar" target="_blank">here</a>!</P>
-    </CENTER>
-</BODY>
-   
-</HTML>
+				normal.x -= 0.5;
+				normal.y -= 0.5;
+				vec3 normalVector = normalize(normal.xyz);
+				lightVector = normalize(lightVector);
+				lampVector = normalize(lampVector);
+
+				float diffuse = gamma * max(dot( normalVector, lightVector ),0.0);
+				float ambient = natural * max(dot( normalVector, lampVector), 0.0);
+				gl_FragColor = color * diffuse + color * vec4(0.0625, 0.25, 0.5, 0.0) * ambient;
+			}
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js'></script>
+        <script src="js/index.js"></script>
+	</body>
+</html>
