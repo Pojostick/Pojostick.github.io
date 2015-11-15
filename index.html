@@ -36,8 +36,10 @@ Scroll after clicking to change gamma.">
 				lightVector = normalize(lightVector);
 				lampVector = normalize(lampVector);
 
-				float diffuse = gamma * max(dot( normalVector, lightVector ),0.0);
-				float ambient = natural * max(dot( normalVector, lampVector), 0.0);
+				float diffuse = dot(normalVector, lightVector);
+				float ambient = dot(normalVector, lampVector);
+				diffuse *= gamma * diffuse;
+				ambient *= natural * ambient;
 				gl_FragColor = color * diffuse + color * vec4(0.0625, 0.25, 0.5, 0.0) * ambient;
 			}
 		</script>
